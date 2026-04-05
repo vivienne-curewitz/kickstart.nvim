@@ -255,6 +255,9 @@ rtp:prepend(lazypath)
 --
 -- NOTE: Here is where you install your plugins.
 require('lazy').setup({
+  -- my plugins here
+
+  -- end my plugins
   -- NOTE: Plugins can be added via a link or github org/name. To run setup automatically, use `opts = {}`
   { 'NMAC427/guess-indent.nvim', opts = {} },
 
@@ -526,7 +529,27 @@ require('lazy').setup({
       --
       -- If you're wondering about lsp vs treesitter, you can check out the wonderfully
       -- and elegantly composed help section, `:help lsp-vs-treesitter`
+      -- my addition
+      -- 1. Define the configuration for rust_analyzer
+      -- This replaces lspconfig.rust_analyzer.setup({...})
+      vim.lsp.config('rust_analyzer', {
+        settings = {
+          ['rust-analyzer'] = {
+            imports = {
+              granularity = { group = 'module' },
+              prefix = 'self',
+            },
+            cargo = {
+              buildScripts = { enable = true },
+            },
+            procMacro = { enable = true },
+          },
+        },
+      })
 
+      -- 2. Actually enable the server
+      -- This tells Neovim to start rust-analyzer when you open a Rust file
+      vim.lsp.enable 'rust_analyzer'
       --  This function gets run when an LSP attaches to a particular buffer.
       --    That is to say, every time a new file is opened that is associated with
       --    an lsp (for example, opening `main.rs` is associated with `rust_analyzer`) this
@@ -663,7 +686,59 @@ require('lazy').setup({
       end
     end,
   },
+  -- debugger - Viv add
+  {
+    'mfussenegger/nvim-dap',
+    dependencies = {
+      'rcarriga/nvim-dap-ui', -- The graphical interface
+      'nvim-neotest/nvim-nio', -- Required for dap-ui
+      'theHamsta/nvim-dap-virtual-text', -- Shows variable values in-line
+      'williamboman/mason.nvim', -- To find the debugger binary
+    },
+    config = function()
+      local dap = require 'dap'
+      local dapui = require 'dapui'
 
+      dapui.setup()
+
+      -- 1. Setup Keymaps (Standard Debugger Keys)
+      vim.keymap.set('n', '<F5>', dap.continue, { desc = 'Debug: Start/Continue' })
+      vim.keymap.set('n', '<F10>', dap.step_over, { desc = 'Debug: Step Over' })
+      vim.keymap.set('n', '<F11>', dap.step_into, { desc = 'Debug: Step Into' })
+      vim.keymap.set('n', '<F12>', dap.step_out, { desc = 'Debug: Step Out' })
+      vim.keymap.set('n', '<leader>b', dap.toggle_breakpoint, { desc = 'Debug: Toggle Breakpoint' })
+
+      -- 2. Automatically open/close UI
+      dap.listeners.after.event_initialized['dapui_config'] = dapui.open
+      dap.listeners.before.event_terminated['dapui_config'] = dapui.close
+      dap.listeners.before.event_exited['dapui_config'] = dapui.close
+
+      -- local codelldb_path = '/home/vivienne/.local/share/nvim/mason/packages/codelldb/'
+    end,
+  },
+  --{ 'rcarriga/nvim-dap-ui', dependencies = { 'mfussenegger/nvim-dap', 'nvim-neotest/nvim-nio' } },
+  {
+    'mrcjkb/rustaceanvim',
+    version = '^5', -- Recommended
+    lazy = false, -- This plugin is already lazy
+    config = function()
+      vim.g.rustaceanvim = {
+        -- LSP configuration
+        server = {
+          on_attach = function(client, bufnr)
+            -- Enable inlay hints natively for 0.11
+            if client.supports_method 'textDocument/inlayHint' then vim.lsp.inlay_hint.enable(true, { bufnr = bufnr }) end
+          end,
+          default_settings = {
+            ['rust-analyzer'] = {
+              cargo = { allFeatures = true },
+              procMacro = { enable = true },
+            },
+          },
+        },
+      }
+    end,
+  },
   { -- Autoformat
     'stevearc/conform.nvim',
     event = { 'BufWritePre' },
