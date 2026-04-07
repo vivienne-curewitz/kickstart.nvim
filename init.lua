@@ -727,7 +727,7 @@ require('lazy').setup({
         server = {
           on_attach = function(client, bufnr)
             -- Enable inlay hints natively for 0.11
-            if client.supports_method 'textDocument/inlayHint' then vim.lsp.inlay_hint.enable(true, { bufnr = bufnr }) end
+            if client.supports_method 'textDocument/inlayHint' then vim.lsp.inlay_hint.enable(false, { bufnr = bufnr }) end
           end,
           default_settings = {
             ['rust-analyzer'] = {
@@ -872,27 +872,30 @@ require('lazy').setup({
       signature = { enabled = true },
     },
   },
-
-  { -- You can easily change to a different colorscheme.
-    -- Change the name of the colorscheme plugin below, and then
-    -- change the command in the config to whatever the name of that colorscheme is.
-    --
-    -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-    'folke/tokyonight.nvim',
-    priority = 1000, -- Make sure to load this before all the other start plugins.
+  -- AI?? Do we even need this --
+  {
+    'supermaven-inc/supermaven-nvim',
+    config = function() require('supermaven-nvim').setup {} end,
+  },
+  -- End AI --
+  {
+    'sainnhe/everforest',
+    lazy = false, -- Themes should usually not be lazy-loaded
+    priority = 1000, -- Load this before other plugins
     config = function()
-      ---@diagnostic disable-next-line: missing-fields
-      require('tokyonight').setup {
-        transparent = true,
-        styles = {
-          comments = { italic = false }, -- Disable italics in comments
-        },
-      }
+      -- Everforest configuration happens via global variables (vim.g)
+      -- These MUST be set before the 'colorscheme' command
+      vim.g.everforest_transparent_background = 1
+      vim.g.everforest_enable_italic = 0 -- Disable italics globally in the theme
 
-      -- Load the colorscheme here.
-      -- Like many other themes, this one has different styles, and you could load
-      -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      vim.cmd.colorscheme 'tokyonight-night'
+      -- If you only want to disable italics for comments specifically:
+      -- vim.g.everforest_disable_italic_comment = 1
+
+      -- Set the background character (hard, medium, or soft)
+      vim.g.everforest_background = 'medium'
+
+      -- Finally, load the colorscheme
+      vim.cmd.colorscheme 'everforest'
     end,
   },
 
