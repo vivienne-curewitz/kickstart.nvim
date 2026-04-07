@@ -532,24 +532,24 @@ require('lazy').setup({
       -- my addition
       -- 1. Define the configuration for rust_analyzer
       -- This replaces lspconfig.rust_analyzer.setup({...})
-      vim.lsp.config('rust_analyzer', {
-        settings = {
-          ['rust-analyzer'] = {
-            imports = {
-              granularity = { group = 'module' },
-              prefix = 'self',
-            },
-            cargo = {
-              buildScripts = { enable = true },
-            },
-            procMacro = { enable = true },
-          },
-        },
-      })
+      -- vim.lsp.config('rust_analyzer', {
+      --   settings = {
+      --     ['rust-analyzer'] = {
+      --       imports = {
+      --         granularity = { group = 'module' },
+      --         prefix = 'self',
+      --       },
+      --       cargo = {
+      --         buildScripts = { enable = true },
+      --       },
+      --       procMacro = { enable = true },
+      --     },
+      --   },
+      -- })
 
       -- 2. Actually enable the server
       -- This tells Neovim to start rust-analyzer when you open a Rust file
-      vim.lsp.enable 'rust_analyzer'
+      -- vim.lsp.enable 'rust_analyzer'
       --  This function gets run when an LSP attaches to a particular buffer.
       --    That is to say, every time a new file is opened that is associated with
       --    an lsp (for example, opening `main.rs` is associated with `rust_analyzer`) this
