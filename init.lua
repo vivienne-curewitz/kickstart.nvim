@@ -872,11 +872,7 @@ require('lazy').setup({
       signature = { enabled = true },
     },
   },
-  -- AI?? Do we even need this --
-  --{
-  -- 'supermaven-inc/supermaven-nvim',
-  -- config = function() require('supermaven-nvim').setup {} end,
-  --},
+  -- AI Code Assistant
   {
     'olimorris/codecompanion.nvim',
     version = '^19.0.0',
@@ -910,7 +906,7 @@ require('lazy').setup({
             autostart = true,
           },
           chat = {
-            adapter = 'gemini',
+            adapter = 'copilot',
           },
         },
       }
