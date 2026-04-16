@@ -873,9 +873,40 @@ require('lazy').setup({
     },
   },
   -- AI?? Do we even need this --
+  --{
+  -- 'supermaven-inc/supermaven-nvim',
+  -- config = function() require('supermaven-nvim').setup {} end,
+  --},
   {
-    'supermaven-inc/supermaven-nvim',
-    config = function() require('supermaven-nvim').setup {} end,
+    'olimorris/codecompanion.nvim',
+    version = '^19.0.0',
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      'nvim-treesitter/nvim-treesitter',
+    },
+    config = function()
+      require('codecompanion').setup {
+        interactions = {
+          inline = {
+            adapter = 'gemini', -- 3. Point the strategy to your custom adapter
+            model = 'gemini-3.1-flash-lite-preview',
+            autostart = false,
+          },
+          chat = {
+            adapter = 'gemini', -- Point the chat to it as well
+            model = 'gemini-3.1-flash-lite-preview',
+          },
+        },
+      }
+
+      -- KEYBINDINGS
+      -- Trigger completion (Show me a completion)
+      vim.keymap.set({ 'n', 'v' }, '<leader>ac', '<cmd>CodeCompanion<cr>', { noremap = true, silent = true })
+      vim.keymap.set({ 'n', 'v' }, '<leader>cc', '<cmd>CodeCompanionChat<cr>', { noremap = true, silent = true })
+
+      -- Inline completion trigger (Ghost text style)
+      -- vim.keymap.set('i', '<C-f>', function() require('codecompanion').inline() end, { noremap = true, silent = true, desc = 'Gemini: Suggest completion' })
+    end,
   },
   -- End AI --
   {
