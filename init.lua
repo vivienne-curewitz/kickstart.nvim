@@ -883,29 +883,41 @@ require('lazy').setup({
     dependencies = {
       'nvim-lua/plenary.nvim',
       'nvim-treesitter/nvim-treesitter',
+      'github/copilot.vim',
     },
     config = function()
       require('codecompanion').setup {
+        adapters = {
+          gemini = function()
+            return require('codecompanion.adapters').extend('gemini', {
+              env = {
+                api_key = os.getenv 'GEMINI_API_KEY',
+              },
+              schema = {
+                model = {
+                  default = 'gemini-1.5-flash',
+                },
+              },
+            })
+          end,
+
+          copilot = function() return require('codecompanion.adapters').extend('copilot', {}) end,
+        },
+
         interactions = {
           inline = {
-            adapter = 'gemini', -- 3. Point the strategy to your custom adapter
-            model = 'gemini-3.1-flash-lite-preview',
-            autostart = false,
+            adapter = 'copilot',
+            autostart = true,
           },
           chat = {
-            adapter = 'gemini', -- Point the chat to it as well
-            model = 'gemini-3.1-flash-lite-preview',
+            adapter = 'gemini',
           },
         },
       }
 
-      -- KEYBINDINGS
-      -- Trigger completion (Show me a completion)
-      vim.keymap.set({ 'n', 'v' }, '<leader>ac', '<cmd>CodeCompanion<cr>', { noremap = true, silent = true })
-      vim.keymap.set({ 'n', 'v' }, '<leader>cc', '<cmd>CodeCompanionChat<cr>', { noremap = true, silent = true })
-
-      -- Inline completion trigger (Ghost text style)
-      -- vim.keymap.set('i', '<C-f>', function() require('codecompanion').inline() end, { noremap = true, silent = true, desc = 'Gemini: Suggest completion' })
+      -- Keymaps
+      vim.keymap.set({ 'n', 'v' }, '<leader>ac', '<cmd>CodeCompanion<cr>', { silent = true })
+      vim.keymap.set({ 'n', 'v' }, '<leader>cc', '<cmd>CodeCompanionChat<cr>', { silent = true })
     end,
   },
   -- End AI --
