@@ -903,7 +903,7 @@ require('lazy').setup({
         interactions = {
           inline = {
             adapter = 'copilot',
-            autostart = true,
+            autostart = false,
           },
           chat = {
             adapter = 'copilot',
@@ -914,6 +914,15 @@ require('lazy').setup({
       -- Keymaps
       vim.keymap.set({ 'n', 'v' }, '<leader>ac', '<cmd>CodeCompanion<cr>', { silent = true })
       vim.keymap.set({ 'n', 'v' }, '<leader>cc', '<cmd>CodeCompanionChat<cr>', { silent = true })
+      vim.keymap.set('n', '<leader>ca', function()
+        if vim.g.copilot_enabled == nil or vim.g.copilot_enabled == 1 then
+          vim.g.copilot_enabled = 0
+          print 'Copilot OFF'
+        else
+          vim.g.copilot_enabled = 1
+          print 'Copilot ON'
+        end
+      end, { silent = true })
     end,
   },
   -- End AI --
